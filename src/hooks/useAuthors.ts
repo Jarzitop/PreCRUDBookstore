@@ -1,7 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 
-export type Author = { id:number; name:string; birthDate:string; image?:string; description?:string };
+export type Author = { id:number; name:string; birthDate:string; image:string; description:string };
 
 export function useAuthors() {
   const [authors, setAuthors] = useState<Author[]>([]);

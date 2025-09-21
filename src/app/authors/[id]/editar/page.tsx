@@ -10,8 +10,8 @@ import { useAuthors } from "@/hooks/useAuthors";
 const Schema = z.object({
   name: z.string().min(1, "Nombre requerido"),
   birthDate: z.string().min(1, "Fecha requerida"),
-  image: z.string().url("URL inválida").optional().or(z.literal("")),
-  description: z.string().optional(),
+  image: z.string().url("URL inválida"),
+  description: z.string().min(1, "Descripción requerida"),
 });
 type FormT = z.infer<typeof Schema>;
 
@@ -20,7 +20,6 @@ export default function EditarPage() {
   const router = useRouter();
   const { authors, setAuthors, loading, error, load, update } = useAuthors();
 
-  // carga si no hay lista
   useEffect(() => { if (!authors.length) load(); }, [authors.length, load]);
 
   const current = useMemo(
@@ -31,7 +30,6 @@ export default function EditarPage() {
   const { register, handleSubmit, formState:{ errors, isSubmitting }, reset } =
     useForm<FormT>({ resolver: zodResolver(Schema) });
 
-  // precarga valores cuando exista current
   useEffect(() => {
     if (current) {
       reset({
@@ -45,12 +43,7 @@ export default function EditarPage() {
 
   async function onSubmit(data: FormT) {
     try {
-      const payload = {
-        ...data,
-        image: data.image || undefined,
-        description: data.description || undefined,
-      };
-      const saved = await update(Number(id), payload);
+      const saved = await update(Number(id), data);
       setAuthors(prev => prev.map(a => (a.id === saved.id ? saved : a)));
       router.push("/authors");
     } catch (e: unknown) {
@@ -72,10 +65,11 @@ export default function EditarPage() {
         <input type="date" {...register("birthDate")} className="w-full border p-2 rounded" />
         {errors.birthDate && <p className="text-red-600 text-sm">{errors.birthDate.message}</p>}
 
-        <input {...register("image")} placeholder="URL de imagen" className="w-full border p-2 rounded" />
+        <input {...register("image")} required placeholder="URL de imagen" className="w-full border p-2 rounded" />
         {errors.image && <p className="text-red-600 text-sm">{errors.image.message}</p>}
 
-        <textarea {...register("description")} placeholder="Descripción" className="w-full border p-2 rounded" />
+        <textarea {...register("description")} required placeholder="Descripción" className="w-full border p-2 rounded" />
+        {errors.description && <p className="text-red-600 text-sm">{errors.description.message}</p>}
 
         <button disabled={isSubmitting} className="px-4 py-2 rounded bg-black text-white disabled:opacity-60">
           Actualizar

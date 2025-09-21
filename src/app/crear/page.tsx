@@ -9,8 +9,8 @@ import { useAuthors } from "@/hooks/useAuthors";
 const Schema = z.object({
   name: z.string().min(1, "Nombre requerido"),
   birthDate: z.string().min(1, "Fecha requerida"),
-  image: z.string().url("URL inválida").optional().or(z.literal("")),
-  description: z.string().optional(),
+  image: z.string().url("URL inválida"),
+  description: z.string().min(1, "Descripción Requerida"),
 });
 type FormT = z.infer<typeof Schema>;
 
@@ -22,12 +22,8 @@ export default function CrearPage() {
 
   async function onSubmit(data: FormT) {
     try {
-      const payload = {
-        ...data,
-        image: data.image || undefined,
-        description: data.description || undefined,
-      };
-      const saved = await create(payload);
+      
+      const saved = await create(data);
       setAuthors(prev => [saved, ...prev]);
       router.push("/authors");
     } catch (e: unknown) {
