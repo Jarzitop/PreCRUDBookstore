@@ -36,30 +36,30 @@ export default function AuthorsPage() {
         <p className="text-gray-600">No hay autores aún.</p>
       ) : (
         <ul className="space-y-2">
-          {authors.map(a => (
-            <li key={a.id} className="p-3 rounded border flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Image
-                  src={a.image} alt={a.name}
-                  width={48} height={48}
-                  className="h-12 w-12 rounded object-cover"
-                />
-                <div>
-                  <div className="font-medium">{a.name}</div>
-                  <div className="text-sm text-gray-600">{a.birthDate}</div>
-                  <p className="text-sm text-gray-500 line-clamp-2">{a.description}</p>
+          {authors.map(a => {
+            const src = a.image?.trim() ? a.image : "/placeholder.png"; // fallback local
+            return (
+              <li key={a.id} className="p-3 rounded border flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <img src={src} alt={a.name} className="h-12 w-12 rounded object-cover" width={48} height={48} />
+
+                  <div>
+                    <div className="font-medium">{a.name}</div>
+                    <div className="text-sm text-gray-600">{a.birthDate}</div>
+                    <p className="text-sm text-gray-500 line-clamp-2">{a.description}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Link href={`/authors/${a.id}/editar`} className="text-blue-600 underline">
-                  Editar
-                </Link>
-                <button onClick={() => onDelete(a.id)} className="text-red-600">
-                  Eliminar
-                </button>
-              </div>
-            </li>
-          ))}
+                <div className="flex items-center gap-3">
+                  <Link href={`/authors/${a.id}/editar`} className="text-blue-600 underline">
+                    Editar
+                  </Link>
+                  <button onClick={() => onDelete(a.id)} className="text-red-600">
+                    Eliminar
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
